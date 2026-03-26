@@ -241,7 +241,7 @@ html,body{background:var(--bg);color:var(--text);font-family:-apple-system,Blink
 
       <div class="strc">
         <div class="strh"><div class="strn">✓ Back Thickness</div><div class="strl g">Solid Intermediate</div></div>
-        <div class="dots"><div class="dot og"></div><div class="dot og"></div><div class="dot og"></div><div class="dot og"></div><div class="dot"></div></div>
+        <div clas="dots"><div class="dot og"></div><div class="dot og"></div><div class="dot og"></div><div class="dot og"></div><div class="dot"></div></div>
         <div class="strnt">Row 1RM ~196. Not a weakness — consistent 3-set effort at 155.</div>
       </div>
 
@@ -274,7 +274,7 @@ html,body{background:var(--bg);color:var(--text);font-family:-apple-system,Blink
       <div class="sl">Program Notes</div>
       <div class="card">
         <div class="gi"><div class="ga">›</div><div class="gt">No barbell back squat — knee restriction. Hack Squat is the primary quad driver on Legs A.</div></div>
-        <div class="gi"><div class="ga">›</div><div class="gt">6'5" frame = long levers. Rep quality matters more than raw numbers.</div></div>
+        <div class="gi"><div class="ga">›</div><div class="gt">6'35" frame = long levers. Rep quality matters more than raw numbers.</div></div>
         <div class="gi"><div class="ga">›</div><div class="gt">OHP is the priority weak point. Small wins here compound fastest right now.</div></div>
         <div class="gi"><div class="ga">›</div><div class="gt">Pull-up endurance improves naturally as bodyweight drops. Track the cliff, not just set 1.</div></div>
       </div>
@@ -406,11 +406,11 @@ function renderEL(){
       <div class="eb" id="eb${i}">
         <div class="chips" id="ch${i}"></div>
         <div class="si">
-          <div style="flex:1">
+          <div style="flex:1;min-width:0">
             <input class="sinp" type="number" id="w${i}" placeholder="135" inputmode="decimal">
             <div class="ilabel">lbs (blank = BW)</div>
           </div>
-          <div style="flex:.7">
+          <div style="flex:.7;min-width:0">
             <input class="sinp" type="number" id="r${i}" placeholder="8" inputmode="numeric">
             <div class="ilabel">reps</div>
           </div>
