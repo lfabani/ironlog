@@ -1,0 +1,284 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1"/>
+<title>IRON LOG</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{background:#0a0a0a;color:#fff;font-family:-apple-system,BlinkMacSystemFont,sans-serif;min-height:100vh}
+.hdr{background:#0a0a0a;border-bottom:1px solid #1f2937;padding:14px 16px;position:sticky;top:0;z-index:10}
+.hdr-top{display:flex;align-items:center;justify-content:space-between;margin-bottom:12px}
+.logo{display:flex;align-items:center;gap:10px}
+.logo-icon{width:36px;height:36px;background:#f97316;border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:18px}
+.logo-text{font-size:18px;font-weight:900;letter-spacing:-0.02em}
+.logo-sub{font-size:10px;color:#6b7280;letter-spacing:0.15em}
+.badge-cut{font-size:10px;font-weight:700;padding:5px 10px;border-radius:999px;background:rgba(127,29,29,0.3);color:#f87171;border:1px solid rgba(127,29,29,0.5)}
+.tabs{display:flex;gap:4px;overflow-x:auto}
+.tab{padding:6px 12px;border-radius:8px;font-size:11px;font-weight:600;cursor:pointer;border:none;white-space:nowrap;background:#111827;color:#9ca3af}
+.tab.active{background:#f97316;color:#000}
+.content{max-width:680px;margin:0 auto;padding:18px 14px}
+.section{margin-bottom:20px}
+.label{font-size:10px;font-weight:700;letter-spacing:0.1em;color:#6b7280;text-transform:uppercase;margin-bottom:10px}
+.grid-6{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}
+.grid-4{display:grid;grid-template-columns:repeat(2,1fr);gap:8px}
+.grid-7{display:grid;grid-template-columns:repeat(7,1fr);gap:5px}
+.stat-card{background:#111827;border:1px solid #1f2937;border-radius:10px;padding:10px;text-align:center}
+.stat-label{font-size:10px;color:#6b7280;margin-bottom:3px;letter-spacing:0.08em}
+.stat-val{font-weight:700;font-size:13px}
+.metric-card{background:#111827;border:1px solid #1f2937;border-radius:10px;padding:12px}
+.metric-icon{font-size:14px;margin-bottom:4px}
+.metric-label{font-size:11px;color:#6b7280;margin-bottom:3px}
+.metric-val{font-size:20px;font-weight:700}
+.day-cell{border-radius:8px;padding:7px 4px;text-align:center;border:1px solid #1f2937;background:#111827}
+.day-cell.logged{border-color:rgba(249,115,22,0.4);background:rgba(249,115,22,0.08)}
+.day-cell.rest{opacity:0.4}
+.day-num{font-size:10px;color:#6b7280;margin-bottom:2px}
+.day-name{font-size:10px;font-weight:700;color:#9ca3af}
+.day-cell.logged .day-name{color:#f97316}
+.day-check{font-size:9px;color:#4ade80;margin-top:2px}
+.day-pending{font-size:9px;color:#374151;margin-top:2px}
+.flag-card{border-radius:12px;padding:14px;margin-bottom:10px;display:flex;gap:12px;border:1px solid rgba(127,29,29,0.5);background:rgba(127,29,29,0.06)}
+.flag-card.med{border-color:rgba(124,45,18,0.5);background:rgba(124,45,18,0.06)}
+.flag-num{width:28px;height:28px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:13px;background:rgba(127,29,29,0.4);color:#f87171;flex-shrink:0}
+.flag-card.med .flag-num{background:rgba(124,45,18,0.4);color:#fb923c}
+.flag-name{font-weight:600;font-size:13px;margin-bottom:4px}
+.flag-badge{font-size:10px;padding:2px 7px;border-radius:999px;font-weight:700;background:rgba(127,29,29,0.4);color:#f87171;display:inline-block;margin-left:6px}
+.flag-card.med .flag-badge{background:rgba(124,45,18,0.4);color:#fb923c}
+.flag-note{font-size:12px;color:#9ca3af;line-height:1.6}
+.goal-card{background:#111827;border:1px solid #1f2937;border-radius:12px;padding:14px}
+.goal-item{display:flex;align-items:flex-start;gap:8px;margin-bottom:8px;font-size:13px;color:#d1d5db}
+.arrow{color:#f97316}
+.ex-card{border-radius:12px;padding:14px;margin-bottom:10px;border:1px solid}
+.ex-card.flagged{background:#1a0505;border-color:#7f1d1d}
+.ex-card.watch{background:#1a0d05;border-color:#7c2d12}
+.ex-card.progressing{background:#1a1a05;border-color:#713f12}
+.ex-card.good{background:#051a08;border-color:#14532d}
+.ex-header{display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:8px}
+.ex-name{font-weight:600;font-size:13px;flex:1}
+.ex-meta{display:flex;align-items:center;gap:6px;flex-shrink:0;margin-left:8px}
+.ex-rm{font-size:11px;color:#9ca3af;font-family:monospace}
+.ex-badge{font-size:10px;font-weight:700;padding:2px 8px;border-radius:999px}
+.badge-flagged{background:rgba(127,29,29,0.4);color:#f87171}
+.badge-watch{background:rgba(124,45,18,0.4);color:#fb923c}
+.badge-progressing{background:rgba(113,64,0,0.4);color:#facc15}
+.badge-good{background:rgba(20,83,45,0.4);color:#4ade80}
+.sets{display:flex;flex-wrap:wrap;margin-bottom:8px}
+.set-pill{display:inline-block;padding:2px 8px;border-radius:4px;font-size:11px;font-family:monospace;background:#1f2937;color:#d1d5db;border:1px solid #374151;margin-right:4px;margin-bottom:4px}
+.ex-next{font-size:12px;color:#9ca3af;line-height:1.6}
+.next-arrow{color:#f97316;font-weight:600}
+.split-day{border-radius:12px;margin-bottom:8px;border:1px solid #1f2937;background:#111827;cursor:pointer;overflow:hidden}
+.split-day.logged{border-color:rgba(249,115,22,0.3);background:rgba(249,115,22,0.05)}
+.split-day.rest{opacity:0.5;cursor:default}
+.split-hdr{display:flex;align-items:center;justify-content:space-between;padding:12px}
+.split-num{width:30px;height:30px;border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:700;background:#1f2937;color:#9ca3af;flex-shrink:0;margin-right:10px}
+.split-day.logged .split-num{background:rgba(249,115,22,0.2);color:#f97316}
+.split-title{font-weight:600;font-size:13px}
+.split-focus{font-size:11px;color:#6b7280}
+.split-check{font-size:11px;color:#4ade80;font-weight:600}
+.split-pending{font-size:11px;color:#374151}
+.split-exs{padding:0 12px 12px;border-top:1px solid #1f2937;display:grid;grid-template-columns:1fr 1fr;gap:5px;padding-top:10px}
+.split-ex{display:flex;align-items:center;gap:6px;font-size:12px;color:#d1d5db}
+.split-ex-num{width:16px;height:16px;border-radius:50%;background:#1f2937;color:#6b7280;font-size:10px;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.str-card{background:#111827;border:1px solid #1f2937;border-radius:12px;padding:14px;margin-bottom:8px}
+.str-header{display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:8px}
+.str-name{font-weight:600;font-size:13px}
+.str-label{font-size:11px;font-weight:600}
+.str-label.bad{color:#f87171}
+.str-label.good{color:#4ade80}
+.str-label.na{color:#6b7280}
+.dots{display:flex;gap:3px}
+.dot{width:10px;height:10px;border-radius:50%;background:#1f2937}
+.dot.on.bad{background:#ef4444}
+.dot.on.good{background:#f97316}
+.str-note{font-size:12px;color:#9ca3af;line-height:1.6}
+.phil-card{background:#111827;border:1px solid rgba(249,115,22,0.2);border-radius:12px;padding:14px;margin-bottom:14px}
+.phil-item{display:flex;align-items:flex-start;gap:8px;margin-bottom:8px;font-size:13px;color:#d1d5db}
+.msg-card{background:#111827;border:1px solid #374151;border-radius:12px;padding:14px}
+.msg-label{font-size:10px;font-weight:700;letter-spacing:0.1em;color:#6b7280;text-transform:uppercase;margin-bottom:10px}
+.msg-ta{width:100%;background:#1f2937;border:1px solid #374151;border-radius:8px;padding:10px;font-size:13px;color:#e5e7eb;resize:none;min-height:80px;font-family:inherit;outline:none}
+.msg-hint{font-size:11px;color:#374151;margin-top:6px}
+.tabs-sub{display:flex;gap:6px;margin-bottom:18px}
+.tab-sub{padding:7px 14px;border-radius:8px;font-size:12px;font-weight:600;cursor:pointer;border:none;background:#1f2937;color:#9ca3af}
+.tab-sub.active{background:#f97316;color:#000}
+.pending-box{background:#111827;border:1px dashed #374151;border-radius:12px;padding:22px;text-align:center;margin-top:12px}
+.pending-icon{font-size:22px;color:#374151;margin-bottom:6px}
+.pending-text{font-size:13px;color:#6b7280}
+.pending-sub{font-size:11px;color:#374151;margin-top:4px}
+.footer{text-align:center;padding:0 0 20px;font-size:11px;color:#1f2937}
+.hidden{display:none}
+</style>
+</head>
+<body>
+<div class="hdr">
+  <div class="hdr-top">
+    <div class="logo">
+      <div class="logo-icon">🏋</div>
+      <div>
+        <div class="logo-text">IRON LOG</div>
+        <div class="logo-sub">BODYBUILDING COACH</div>
+      </div>
+    </div>
+    <span class="badge-cut">⚡ CUT PHASE</span>
+  </div>
+  <div class="tabs">
+    <button class="tab active" onclick="showTab('dash')">Dashboard</button>
+    <button class="tab" onclick="showTab('lifts')">Lift Tracker</button>
+    <button class="tab" onclick="showTab('split')">The Split</button>
+    <button class="tab" onclick="showTab('coach')">Coach's Corner</button>
+  </div>
+</div>
+
+<div class="content">
+
+<!-- DASHBOARD -->
+<div id="tab-dash">
+  <div class="section">
+    <div class="grid-6">
+      <div class="stat-card"><div class="stat-label">AGE</div><div class="stat-val">24</div></div>
+      <div class="stat-card"><div class="stat-label">HEIGHT</div><div class="stat-val">6'5"</div></div>
+      <div class="stat-card"><div class="stat-label">WEIGHT</div><div class="stat-val">235 lbs</div></div>
+      <div class="stat-card"><div class="stat-label">BODY FAT</div><div class="stat-val">~22%</div></div>
+      <div class="stat-card"><div class="stat-label">FREQUENCY</div><div class="stat-val">6 days</div></div>
+      <div class="stat-card"><div class="stat-label">SESSION</div><div class="stat-val">90+ min</div></div>
+    </div>
+  </div>
+  <div class="section">
+    <div class="grid-4">
+      <div class="metric-card"><div class="metric-label">Days Logged</div><div class="metric-val" style="color:#4ade80">2 / 6</div></div>
+      <div class="metric-card"><div class="metric-label">Exercises Tracked</div><div class="metric-val" style="color:#f97316">12</div></div>
+      <div class="metric-card"><div class="metric-label">Est. Flat Bench 1RM</div><div class="metric-val" style="color:#60a5fa">~255 lbs</div></div>
+      <div class="metric-card"><div class="metric-label">OHP 1RM ⚠ Weak Point</div><div class="metric-val" style="color:#f87171">~117 lbs</div></div>
+    </div>
+  </div>
+  <div class="section">
+    <div class="label">Current Week</div>
+    <div class="grid-7">
+      <div class="day-cell logged"><div class="day-num">D1</div><div class="day-name">Push A</div><div class="day-check">✓ Mar 23</div></div>
+      <div class="day-cell logged"><div class="day-num">D2</div><div class="day-name">Pull A</div><div class="day-check">✓ Mar 25</div></div>
+      <div class="day-cell"><div class="day-num">D3</div><div class="day-name">Legs A</div><div class="day-pending">Pending</div></div>
+      <div class="day-cell"><div class="day-num">D4</div><div class="day-name">Push B</div><div class="day-pending">Pending</div></div>
+      <div class="day-cell"><div class="day-num">D5</div><div class="day-name">Pull B</div><div class="day-pending">Pending</div></div>
+      <div class="day-cell"><div class="day-num">D6</div><div class="day-name">Legs B</div><div class="day-pending">Pending</div></div>
+      <div class="day-cell rest"><div class="day-num">D7</div><div class="day-name">REST</div></div>
+    </div>
+  </div>
+  <div class="section">
+    <div class="label">Coaching Flags — Top Priorities</div>
+    <div class="flag-card">
+      <div class="flag-num">1</div>
+      <div><div class="flag-name">Weighted Pull-Up <span class="flag-badge">HIGH PRIORITY</span></div><div class="flag-note">Rep cliff is too steep: 6↲5→4→2. Endurance, not max strength, is the gap. Next target: 6/5/5/3. Narrow the cliff before adding load.</div></div>
+    </div>
+    <div class="flag-card">
+      <div class="flag-num">2</div>
+      <div><div class="flag-name">Barbell OHP <span class="flag-badge">HIGH PRIORITY</span></div><div class="flag-note">1RM ~117 lbs. Expected ~140–145 for your bodyweight. Clearest strength gap in the program. Priority lift to develop as the cut continues.</div></div>
+    </div>
+    <div class="flag-card med">
+      <div class="flag-num">3</div>
+      <div><div class="flag-name">Incline Press Set 4 <span class="flag-badge">WATCH</span></div><div class="flag-note">Set 4 collapsed to 3 reps while sets 1–3 held 5–6. Endurance within the working set needs work. Target 6/6/6/5 before moving to 190.</div></div>
+    </div>
+  </div>
+  <div class="goal-card">
+    <div class="label">Phase Goals</div>
+    <div class="goal-item"><span class="arrow">›</span>Reduce body fat from ~22% while preserving lean mass</div>
+    <div class="goal-item"><span class="arrow">›</span>Build strength across all major compound lifts</div>
+    <div class="goal-item"><span class="arrow">›</span>Bring OHP up to match overall strength level</div>
+    <div class="goal-item"><span class="arrow">›</span>Priority: chest, back, shoulders, arms, legs</div>
+  </div>
+</div>
+
+<!-- LIFT TRACKER -->
+<div id="tab-lifts" class="hidden">
+  <div class="tabs-sub">
+    <button class="tab-sub active" onclick="showSession('push')">Push A — Mar 23</button>
+    <button class="tab-sub" onclick="showSession('pull')">Pull A — Mar 25</button>
+  </div>
+  <div id="session-push">
+    <div style="display:flex;align-items:center;gap:8px;margin-bottom:12px"><div style="width:8px;height:8px;border-radius:50%;background:#4ade80"></div><span style="font-size:11px;color:#6b7280">Day 1 — Push A · Chest Focus · March 23, 2026</span></div>
+    <div class="ex-card watch"><div class="ex-header"><div class="ex-name">⚠ Incline Barbell Press</div><div class="ex-meta"><span class="ex-rm">1RM ~227 lbs</span><span class="ex-badge badge-watch">WATCH</span></div></div><div class="sets"><span class="set-pill">185×6</span><span class="set-pill">185×5</span><span class="set-pill">185×6</span><span class="set-pill">185×3</span></div><div class="ex-next"><span class="next-arrow">→ </span>Target 6/6/6/5 at 185 before moving to 190. Set 4 endurance is the limiter.</div></div>
+    <div class="ex-card progressing"><div class="ex-header"><div class="ex-name">Flat DB Press</div><div class="ex-meta"><span class="ex-rm">1RM ~96/hand</span><span class="ex-badge badge-progressing">PROGRESSING</span></div></div><div class="sets"><span class="set-pill">85×4</span><span class="set-pill">85×7</span><span class="set-pill">70×9</span></div><div class="ex-next"><span class="next-arrow">→ </span>Reset to 80 lbs across all 3 sets for consistency, then return to 85s.</div></div>
+    <div class="ex-card good"><div class="ex-header"><div class="ex-name">Cable Fly Low-High</div><div class="ex-meta"><span class="ex-badge badge-good">ON TRACK</span></div></div><div class="sets"><span class="set-pill">13×15</span><span class="set-pill">13×12</span><span class="set-pill">13×12</span></div><div class="ex-next"><span class="next-arrow">→ </span>Hold at 13 lbs until 3×15 is clean. Then move to 15 lbs.</div></div>
+    <div class="ex-card flagged"><div class="ex-header"><div class="ex-name">⚠ Barbell OHP</div><div class="ex-meta"><span class="ex-rm">1RM ~117 lbs</span><span class="ex-badge badge-flagged">FLAGGED</span></div></div><div class="sets"><span class="set-pill">95×6</span><span class="set-pill">95×8</span><span class="set-pill">95×6</span></div><div class="ex-next"><span class="next-arrow">→ </span>Target 3×8 at 95 before bumping to 100. Late warm-up effect on set 2 — stay consistent.</div></div>
+    <div class="ex-card good"><div class="ex-header"><div class="ex-name">Cable Lateral Raise</div><div class="ex-meta"><span class="ex-badge badge-good">ON TRACK</span></div></div><div class="sets"><span class="set-pill">13×15</span><span class="set-pill">13×12</span><span class="set-pill">10×15</span><span class="set-pill">10×15</span></div><div class="ex-next"><span class="next-arrow">→ </span>Long-term goal: 4 sets same weight for 15+ reps. Patience required here.</div></div>
+    <div class="ex-card progressing"><div class="ex-header"><div class="ex-name">Tricep Pushdown</div><div class="ex-meta"><span class="ex-badge badge-progressing">PROGRESSING</span></div></div><div class="sets"><span class="set-pill">80×12</span><span class="set-pill">80×9</span><span class="set-pill">70×11</span></div><div class="ex-next"><span class="next-arrow">→ </span>Hold set 1 at 80. Work set 2 up to 10–11 reps before using the drop.</div></div>
+  </div>
+  <div id="session-pull" class="hidden">
+    <div style="display:flex;align-items:center;gap:8px;margin-bottom:12px"><div style="width:8px;height:8px;border-radius:50%;background:#4ade80"></div><span style="font-size:11px;color:#6b7280">Day 2 — Pull A · Back Thickness · March 25, 2026</span></div>
+    <div class="ex-card flagged"><div class="ex-header"><div class="ex-name">⚠ Weighted Pull-Up</div><div class="ex-meta"><span class="ex-badge badge-flagged">FLAGGED</span></div></div><div class="sets"><span class="set-pill">BW×6</span><span class="set-pill">BW×5</span><span class="set-pill">BW×4</span><span class="set-pill">BW×2</span><span style="font-size:11px;color:#6b7280;align-self:center">(BW=235lbs)</span></div><div class="ex-next"><span class="next-arrow">→ </span>Next target: 6/5/5/3. When 4×6 clean at bodyweight, add 10 lbs. Cliff is too steep.</div></div>
+    <div class="ex-card good"><div class="ex-header"><div class="ex-name">Barbell Row</div><div class="ex-meta"><span class="ex-rm">1RM ~196 lbs</span><span class="ex-badge badge-good">ON TRACK</span></div></div><div class="sets"><span class="set-pill">135×10</span><span class="set-pill">155×8</span><span class="set-pill">155×8</span><span class="set-pill">155×7</span></div><div class="ex-next"><span class="next-arrow">→ </span>One session away from 4×8 at 155. Then move to 165. Back thickness is a strength.</div></div>
+    <div class="ex-card progressing"><div class="ex-header"><div class="ex-name">Seated Cable Row</div><div class="ex-meta"><span class="ex-badge badge-progressing">PROGRESSING</span></div></div><div class="sets"><span class="set-pill">145×9</span><span class="set-pill">130×9</span><span class="set-pill">130×8</span></div><div class="ex-next"><span class="next-arrow">→ </span>Opened too heavy. Use 130 all 3 sets next session. Target 3×12 before moving up.</div></div>
+    <div class="ex-card good"><div class="ex-header"><div class="ex-name">Face Pull</div><div class="ex-meta"><span class="ex-badge badge-good">ON TRACK</span></div></div><div class="sets"><span class="set-pill">70×16</span><span class="set-pill">70×15</span><span class="set-pill">70×15</span></div><div class="ex-next"><span class="next-arrow">→ </span>Above target range. Bump to 75 lbs next session.</div></div>
+    <div class="ex-card progressing"><div class="ex-header"><div class="ex-name">Incline DB Curl</div><div class="ex-meta"><span class="ex-badge badge-progressing">PROGRESSING</span></div></div><div class="sets"><span class="set-pill">30×9</span><span class="set-pill">30×9</span><span class="set-pill">25×9</span></div><div class="ex-next"><span class="next-arrow">→ </span>Consistent across sets — good sign. Hold at 30 until hitting 3×11, then progress.</div></div>
+    <div class="ex-card progressing"><div class="ex-header"><div class="ex-name">Hammer Curl</div><div class="ex-meta"><span class="ex-badge badge-progressing">PROGRESSING</span></div></div><div class="sets"><span class="set-pill">30×12</span><span class="set-pill">30×12</span><span class="set-pill">30×10</span></div><div class="ex-next"><span class="next-arrow">→ </span>Nearly there. Hit 3×12 at 30 clean next session, then move to 35s.</div></div>
+  </div>
+  <div class="pending-box"><div class="pending-icon">⏱</div><div class="pending-text">Days 3–6 pending. Legs A, Push B, Pull B, Legs B data incoming.</div><div class="pending-sub">Full baseline after first complete rotation.</div></div>
+</div>
+
+<!-- THE SPLIT -->
+<div id="tab-split" class="hidden">
+  <p style="font-size:11px;color:#6b7280;margin-bottom:12px">PPL Double — 6 training days, 1 rest. Tap to expand exercises.</p>
+  <div class="split-day logged" onclick="toggleSplit(this)"><div class="split-hdr"><div style="display:flex;align-items:center"><div class="split-num">1</div><div><div class="split-title">Push A</div><div class="split-focus">Chest Focus</div></div></div><span class="split-check">✓ Mar 23 ›</span></div><div class="split-exs hidden"><div class="split-ex"><span class="split-ex-num">1</span>Incline Barbell Press</div><div class="split-ex"><span class="split-ex-num">2</span>Flat DB Press</div><div class="split-ex"><span class="split-ex-num">3</span>Cable Fly Low-High</div><div class="split-ex"><span class="split-ex-num">4</span>Barbell OHP</div><div class="split-ex"><span class="split-ex-num">5</span>Cable Lateral Raise</div><div class="split-ex"><span class="split-ex-num">6</span>Tricep Pushdown</div></div></div>
+  <div class="split-day logged" onclick="toggleSplit(this)"><div class="split-hdr"><div style="display:flex;align-items:center"><div class="split-num">2</div><div><div class="split-title">Pull A</div><div class="split-focus">Back Thickness</div></div></div><span class="split-check">✓ Mar 25 ›</span></div><div class="split-exs hidden"><div class="split-ex"><span class="split-ex-num">1</span>Weighted Pull-Up</div><div class="split-ex"><span class="split-ex-num">2</span>Barbell Row</div><div class="split-ex"><span class="split-ex-num">3</span>Seated Cable Row</div><div class="split-ex"><span class="split-ex-num">4</span>Face Pull</div><div class="split-ex"><span class="split-ex-num">5</span>Incline DB Curl</div><div class="split-ex"><span class="split-ex-num">6</span>Hammer Curl</div></div></div>
+  <div class="split-day" onclick="toggleSplit(this)"><div class="split-hdr"><div style="display:flex;align-items:center"><div class="split-num">3</div><div><div class="split-title">Legs A</div><div class="split-focus">Quad Focus</div></div></div><span class="split-pending">Pending ›</span></div><div class="split-exs hidden"><div class="split-ex"><span class="split-ex-num">1</span>Hack Squat</div><div class="split-ex"><span class="split-ex-num">2</span>Leg Press</div><div class="split-ex"><span class="split-ex-num">3</span>Walking Lunge</div><div class="split-ex"><span class="split-ex-num">4</span>Leg Extension</div><div class="split-ex"><span class="split-ex-num">5</span>Lying Leg Curl</div><div class="split-ex"><span class="split-ex-num">6</span>Standing Calf Raise</div></div></div>
+  <div class="split-day" onclick="toggleSplit(this)"><div class="split-hdr"><div style="display:flex;align-items:center"><div class="split-num">4</div><div><div class="split-title">Push B</div><div class="split-focus">Shoulder Focus</div></div></div><span class="split-pending">Pending ›</span></div><div class="split-exs hidden"><div class="split-ex"><span class="split-ex-num">1</span>Seated DB OHP</div><div class="split-ex"><span class="split-ex-num">2</span>Incline DB Press</div><div class="split-ex"><span class="split-ex-num">3</span>Cable Lateral Raise</div><div class="split-ex"><span class="split-ex-num">4</span>Machine Chest Press</div><div class="split-ex"><span class="split-ex-num">5</span>Rear Delt Fly</div><div class="split-ex"><span class="split-ex-num">6</span>Overhead Tricep Extension</div></div></div>
+  <div class="split-day" onclick="toggleSplit(this)"><div class="split-hdr"><div style="display:flex;align-items:center"><div class="split-num">5</div><div><div class="split-title">Pull B</div><div class="split-focus">Width & Arms</div></div></div><span class="split-pending">Pending ›</span></div><div class="split-exs hidden"><div class="split-ex"><span class="split-ex-num">1</span>Lat Pulldown</div><div class="split-ex"><span class="split-ex-num">2</span>Single Arm DB Row</div><div class="split-ex"><span class="split-ex-num">3</span>Wide Grip Cable Row</div><div class="split-ex"><span class="split-ex-num">4</span>Straight Arm Pulldown</div><div class="split-ex"><span class="split-ex-num">5</span>EZ Bar Curl</div><div class="split-ex"><span class="split-ex-num">6</span>Cable Curl</div></div></div>
+  <div class="split-day" onclick="toggleSplit(this)"><div class="split-hdr"><div style="display:flex;align-items:center"><div class="split-num">6</div><div><div class="split-title">Legs B</div><div class="split-focus">Ham & Glute</div></div></div><span class="split-pending">Pending ›</span></div><div class="split-exs hidden"><div class="split-ex"><span class="split-ex-num">1</span>Romanian Deadlift</div><div class="split-ex"><span class="split-ex-num">2</span>Lying Leg Curl</div><div class="split-ex"><span class="split-ex-num">3</span>Bulgarian Split Squat</div><div class="split-ex"><span class="split-ex-num">4</span>Leg Press High Foot</div><div class="split-ex"><span class="split-ex-num">5</span>Hip Thrust</div><div class="split-ex"><span class="split-ex-num">6</span>Seated Calf Raise</div></div></div>
+  <div class="split-day rest"><div class="split-hdr"><div style="display:flex;align-items:center"><div class="split-num" style="color:#374151">R</div><div><div class="split-title" style="color:#374151">REST</div><div class="split-focus">Recovery</div></div></div></div></div>
+</div>
+
+<!-- COACH'S CORNER -->
+<div id="tab-coach" class="hidden">
+  <div class="section">
+    <div class="label">Strength Assessment</div>
+    <div class="str-card"><div class="str-header"><div><div class="str-name">✅ Chest Pressing</div><div class="str-label good">Int → Advanced</div></div><div class="dots"><div class="dot on good"></div><div class="dot on good"></div><div class="dot on good"></div><div class="dot on good"></div><div class="dot"></div></div></div><div class="str-note">~255 flat estimated. Long arms at 6'5" = real mechanical disadvantage. These numbers are more impressive in context.</div></div>
+    <div class="str-card"><div class="str-header"><div><div class="str-name">⚠️ Overhead Press</div><div class="str-label bad">Low Intermediate ⚠</div></div><div class="dots"><div class="dot on bad"></div><div class="dot on bad"></div><div class="dot"></div><div class="dot"></div><div class="dot"></div></div></div><div class="str-note">1RM ~117. Expected 140–145 at your bodyweight. Primary weak point to address.</div></div>
+    <div class="str-card"><div class="str-header"><div><div class="str-name">✅ Back Thickness</div><div class="str-label good">Solid Intermediate</div></div><div class="dots"><div class="dot on good"></div><div class="dot on good"></div><div class="dot on good"></div><div class="dot on good"></div><div class="dot"></div></div></div><div class="str-note">Row 1RM ~196. Back thickness is not a weakness — consistent three-set effort at 155.</div></div>
+    <div class="str-card"><div class="str-header"><div><div class="str-name">⚠️ Pull-Up Endurance</div><div class="str-label bad">Below Expected ⚠</div></div><div class="dots"><div class="dot on bad"></div><div class="dot on bad"></div><div class="dot"></div><div class="dot"></div><div class="dot"></div></div></div><div class="str-note">Max strength is likely fine. Endurance and bodyweight are the issue. Will improve as cut progresses.</div></div>
+    <div class="str-card"><div class="str-header"><div><div class="str-name">✅ Arms</div><div class="str-label good">On Track</div></div><div class="dots"><div class="dot on good"></div><div class="dot on good"></div><div class="dot on good"></div><div class="dot"></div><div class="dot"></div></div></div><div class="str-note">Consistency across sets is the strong point. Numbers appropriate for rep ranges.</div></div>
+    <div class="str-card"><div class="str-header"><div><div class="str-name">— Legs</div><div class="str-label na">No Data Yet</div></div><div class="dots"><div class="dot"></div><div class="dot"></div><div class="dot"></div><div class="dot"></div><div class="dot"></div></div></div><div class="str-note">Days 3–6 unlogged. Full picture after first full rotation.</div></div>
+  </div>
+  <div class="phil-card">
+    <div class="label">🔥 Coaching Philosophy — Cut Phase</div>
+    <div class="phil-item"><span style="color:#f97316">★</span>Primary goal is lean mass retention, not progression. Muscle held through a cut is a win.</div>
+    <div class="phil-item"><span style="color:#4ade80">↑</span>Still push for small rep PRs where possible. Rep PRs count as progress.</div>
+    <div class="phil-item"><span style="color:#60a5fa">◎</span>Weight increases ONLY when the top of the rep range is hit cleanly across ALL working sets.</div>
+    <div class="phil-item"><span style="color:#6b7280">—</span>Cardio and diet are yours. I own the iron. Clean separation keeps both optimized.</div>
+  </div>
+  <div class="goal-card" style="margin-bottom:14px">
+    <div class="label">Program Notes</div>
+    <div class="goal-item"><span class="arrow">›</span>No barbell back squat — knee restriction. Hack Squat is the primary quad driver on Legs A.</div>
+    <div class="goal-item"><span class="arrow">›</span>6'5" frame = long levers. Rep quality matters more than raw numbers.</div>
+    <div class="goal-item"><span class="arrow">›</span>OHP is the priority weak point. Small wins here compound fastest right now.</div>
+    <div class="goal-item"><span class="arrow">›</span>Pull-up endurance improves naturally as bodyweight drops. Track the cliff, not just set 1.</div>
+    <div class="goal-item"><span class="arrow">›</span>Days 3–6 unlogged — full baseline after one complete rotation.</div>
+  </div>
+  <div class="msg-card">
+    <div class="msg-label">💬 Notes for Your Coach</div>
+    <textarea class="msg-ta" placeholder="Log how you're feeling, flag something from a session, or write a question to bring into the conversation..."></textarea>
+    <div class="msg-hint">Bring these notes into the chat — your coach is right here in the conversation.</div>
+  </div>
+</div>
+
+</div>
+<div class="footer">2 of 6 days logged · 12 exercises tracked · Mar 25, 2026</div>
+
+<script>
+function showTab(t){
+  document.querySelectorAll('[id^="tab-"]').forEach(el=>el.classList.add('hidden'));
+  document.getElementById('tab-'+t).classList.remove('hidden');
+  document.querySelectorAll('.tab').forEach(el=>el.classList.remove('active'));
+  event.target.classList.add('active');
+}
+function showSession(s){
+  document.querySelectorAll('[id^="session-"]').forEach(el=>el.classList.add('hidden'));
+  document.getElementById('session-'+s).classList.remove('hidden');
+  document.querySelectorAll('.tab-sub').forEach(el=>el.classList.remove('active'));
+  event.target.classList.add('active');
+}
+function toggleSplit(el){
+  const exs=el.querySelector('.split-exs');
+  if(exs)exs.classList.toggle('hidden');
+}
+</script>
+</body>
+</html>
