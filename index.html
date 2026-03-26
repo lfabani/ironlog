@@ -1,283 +1,541 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8"/>
-<meta name="viewport" content="width=device-width,initial-scale=1"/>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
 <title>IRON LOG</title>
 <style>
-*{box-sizing:border-box;margin:0;padding:0}
-body{background:#0a0a0a;color:#fff;font-family:-apple-system,BlinkMacSystemFont,sans-serif;min-height:100vh}
-.hdr{background:#0a0a0a;border-bottom:1px solid #1f2937;padding:14px 16px;position:sticky;top:0;z-index:10}
-.hdr-top{display:flex;align-items:center;justify-content:space-between;margin-bottom:12px}
-.logo{display:flex;align-items:center;gap:10px}
-.logo-icon{width:36px;height:36px;background:#f97316;border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:18px}
-.logo-text{font-size:18px;font-weight:900;letter-spacing:-0.02em}
-.logo-sub{font-size:10px;color:#6b7280;letter-spacing:0.15em}
-.badge-cut{font-size:10px;font-weight:700;padding:5px 10px;border-radius:999px;background:rgba(127,29,29,0.3);color:#f87171;border:1px solid rgba(127,29,29,0.5)}
-.tabs{display:flex;gap:4px;overflow-x:auto}
-.tab{padding:6px 12px;border-radius:8px;font-size:11px;font-weight:600;cursor:pointer;border:none;white-space:nowrap;background:#111827;color:#9ca3af}
-.tab.active{background:#f97316;color:#000}
-.content{max-width:680px;margin:0 auto;padding:18px 14px}
-.section{margin-bottom:20px}
-.label{font-size:10px;font-weight:700;letter-spacing:0.1em;color:#6b7280;text-transform:uppercase;margin-bottom:10px}
-.grid-6{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}
-.grid-4{display:grid;grid-template-columns:repeat(2,1fr);gap:8px}
-.grid-7{display:grid;grid-template-columns:repeat(7,1fr);gap:5px}
-.stat-card{background:#111827;border:1px solid #1f2937;border-radius:10px;padding:10px;text-align:center}
-.stat-label{font-size:10px;color:#6b7280;margin-bottom:3px;letter-spacing:0.08em}
-.stat-val{font-weight:700;font-size:13px}
-.metric-card{background:#111827;border:1px solid #1f2937;border-radius:10px;padding:12px}
-.metric-icon{font-size:14px;margin-bottom:4px}
-.metric-label{font-size:11px;color:#6b7280;margin-bottom:3px}
-.metric-val{font-size:20px;font-weight:700}
-.day-cell{border-radius:8px;padding:7px 4px;text-align:center;border:1px solid #1f2937;background:#111827}
-.day-cell.logged{border-color:rgba(249,115,22,0.4);background:rgba(249,115,22,0.08)}
-.day-cell.rest{opacity:0.4}
-.day-num{font-size:10px;color:#6b7280;margin-bottom:2px}
-.day-name{font-size:10px;font-weight:700;color:#9ca3af}
-.day-cell.logged .day-name{color:#f97316}
-.day-check{font-size:9px;color:#4ade80;margin-top:2px}
-.day-pending{font-size:9px;color:#374151;margin-top:2px}
-.flag-card{border-radius:12px;padding:14px;margin-bottom:10px;display:flex;gap:12px;border:1px solid rgba(127,29,29,0.5);background:rgba(127,29,29,0.06)}
-.flag-card.med{border-color:rgba(124,45,18,0.5);background:rgba(124,45,18,0.06)}
-.flag-num{width:28px;height:28px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:13px;background:rgba(127,29,29,0.4);color:#f87171;flex-shrink:0}
-.flag-card.med .flag-num{background:rgba(124,45,18,0.4);color:#fb923c}
-.flag-name{font-weight:600;font-size:13px;margin-bottom:4px}
-.flag-badge{font-size:10px;padding:2px 7px;border-radius:999px;font-weight:700;background:rgba(127,29,29,0.4);color:#f87171;display:inline-block;margin-left:6px}
-.flag-card.med .flag-badge{background:rgba(124,45,18,0.4);color:#fb923c}
-.flag-note{font-size:12px;color:#9ca3af;line-height:1.6}
-.goal-card{background:#111827;border:1px solid #1f2937;border-radius:12px;padding:14px}
-.goal-item{display:flex;align-items:flex-start;gap:8px;margin-bottom:8px;font-size:13px;color:#d1d5db}
-.arrow{color:#f97316}
-.ex-card{border-radius:12px;padding:14px;margin-bottom:10px;border:1px solid}
-.ex-card.flagged{background:#1a0505;border-color:#7f1d1d}
-.ex-card.watch{background:#1a0d05;border-color:#7c2d12}
-.ex-card.progressing{background:#1a1a05;border-color:#713f12}
-.ex-card.good{background:#051a08;border-color:#14532d}
-.ex-header{display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:8px}
-.ex-name{font-weight:600;font-size:13px;flex:1}
-.ex-meta{display:flex;align-items:center;gap:6px;flex-shrink:0;margin-left:8px}
-.ex-rm{font-size:11px;color:#9ca3af;font-family:monospace}
-.ex-badge{font-size:10px;font-weight:700;padding:2px 8px;border-radius:999px}
-.badge-flagged{background:rgba(127,29,29,0.4);color:#f87171}
-.badge-watch{background:rgba(124,45,18,0.4);color:#fb923c}
-.badge-progressing{background:rgba(113,64,0,0.4);color:#facc15}
-.badge-good{background:rgba(20,83,45,0.4);color:#4ade80}
-.sets{display:flex;flex-wrap:wrap;margin-bottom:8px}
-.set-pill{display:inline-block;padding:2px 8px;border-radius:4px;font-size:11px;font-family:monospace;background:#1f2937;color:#d1d5db;border:1px solid #374151;margin-right:4px;margin-bottom:4px}
-.ex-next{font-size:12px;color:#9ca3af;line-height:1.6}
-.next-arrow{color:#f97316;font-weight:600}
-.split-day{border-radius:12px;margin-bottom:8px;border:1px solid #1f2937;background:#111827;cursor:pointer;overflow:hidden}
-.split-day.logged{border-color:rgba(249,115,22,0.3);background:rgba(249,115,22,0.05)}
-.split-day.rest{opacity:0.5;cursor:default}
-.split-hdr{display:flex;align-items:center;justify-content:space-between;padding:12px}
-.split-num{width:30px;height:30px;border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:700;background:#1f2937;color:#9ca3af;flex-shrink:0;margin-right:10px}
-.split-day.logged .split-num{background:rgba(249,115,22,0.2);color:#f97316}
-.split-title{font-weight:600;font-size:13px}
-.split-focus{font-size:11px;color:#6b7280}
-.split-check{font-size:11px;color:#4ade80;font-weight:600}
-.split-pending{font-size:11px;color:#374151}
-.split-exs{padding:0 12px 12px;border-top:1px solid #1f2937;display:grid;grid-template-columns:1fr 1fr;gap:5px;padding-top:10px}
-.split-ex{display:flex;align-items:center;gap:6px;font-size:12px;color:#d1d5db}
-.split-ex-num{width:16px;height:16px;border-radius:50%;background:#1f2937;color:#6b7280;font-size:10px;display:flex;align-items:center;justify-content:center;flex-shrink:0}
-.str-card{background:#111827;border:1px solid #1f2937;border-radius:12px;padding:14px;margin-bottom:8px}
-.str-header{display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:8px}
-.str-name{font-weight:600;font-size:13px}
-.str-label{font-size:11px;font-weight:600}
-.str-label.bad{color:#f87171}
-.str-label.good{color:#4ade80}
-.str-label.na{color:#6b7280}
-.dots{display:flex;gap:3px}
-.dot{width:10px;height:10px;border-radius:50%;background:#1f2937}
-.dot.on.bad{background:#ef4444}
-.dot.on.good{background:#f97316}
-.str-note{font-size:12px;color:#9ca3af;line-height:1.6}
-.phil-card{background:#111827;border:1px solid rgba(249,115,22,0.2);border-radius:12px;padding:14px;margin-bottom:14px}
-.phil-item{display:flex;align-items:flex-start;gap:8px;margin-bottom:8px;font-size:13px;color:#d1d5db}
-.msg-card{background:#111827;border:1px solid #374151;border-radius:12px;padding:14px}
-.msg-label{font-size:10px;font-weight:700;letter-spacing:0.1em;color:#6b7280;text-transform:uppercase;margin-bottom:10px}
-.msg-ta{width:100%;background:#1f2937;border:1px solid #374151;border-radius:8px;padding:10px;font-size:13px;color:#e5e7eb;resize:none;min-height:80px;font-family:inherit;outline:none}
-.msg-hint{font-size:11px;color:#374151;margin-top:6px}
-.tabs-sub{display:flex;gap:6px;margin-bottom:18px}
-.tab-sub{padding:7px 14px;border-radius:8px;font-size:12px;font-weight:600;cursor:pointer;border:none;background:#1f2937;color:#9ca3af}
-.tab-sub.active{background:#f97316;color:#000}
-.pending-box{background:#111827;border:1px dashed #374151;border-radius:12px;padding:22px;text-align:center;margin-top:12px}
-.pending-icon{font-size:22px;color:#374151;margin-bottom:6px}
-.pending-text{font-size:13px;color:#6b7280}
-.pending-sub{font-size:11px;color:#374151;margin-top:4px}
-.footer{text-align:center;padding:0 0 20px;font-size:11px;color:#1f2937}
-.hidden{display:none}
+*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
+:root{
+  --bg:#09090b;--surface:#18181b;--surface2:#27272a;--border:#3f3f46;
+  --text:#fafafa;--muted:#a1a1aa;--dim:#71717a;
+  --accent:#6366f1;--accent-l:#818cf8;--accent-bg:rgba(99,102,241,0.12);
+  --green:#22c55e;--green-l:#4ade80;--green-bg:rgba(34,197,94,0.12);
+  --red:#ef4444;--red-l:#f87171;--red-bg:rgba(239,68,68,0.1);
+  --yellow:#eab308;
+}
+html,body{background:var(--bg);color:var(--text);font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;font-size:15px;min-height:100vh;overscroll-behavior:none;}
+.app{display:flex;flex-direction:column;min-height:100vh;}
+.top-bar{position:sticky;top:0;z-index:30;background:var(--bg);border-bottom:1px solid var(--border);padding:14px 16px;display:flex;align-items:center;justify-content:space-between;}
+.logo{font-size:16px;font-weight:800;letter-spacing:.1em;color:var(--accent-l);}
+.hdr-date{font-size:12px;color:var(--muted);}
+.content{flex:1;padding:14px 16px 84px;max-width:480px;margin:0 auto;width:100%;}
+.tab{display:none;}.tab.active{display:block;}
+.nav{position:fixed;bottom:0;left:0;right:0;background:var(--surface);border-top:1px solid var(--border);display:flex;z-index:20;padding-bottom:env(safe-area-inset-bottom,0);}
+.nb{flex:1;display:flex;flex-direction:column;align-items:center;gap:3px;padding:9px 0 7px;font-size:10px;font-weight:500;color:var(--dim);cursor:pointer;border:none;background:none;transition:color .15s;}
+.nb.active{color:var(--accent-l);}
+.ni{font-size:21px;line-height:1;}
+/* Cards */
+.card{background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:14px;margin-bottom:10px;}
+.sl{font-size:11px;font-weight:600;letter-spacing:.06em;color:var(--muted);text-transform:uppercase;margin:14px 0 8px;}
+.sl:first-child{margin-top:0;}
+/* Stat grid */
+.stat-row{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:10px;}
+.sc{background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:13px;}
+.sc.hi{border-color:var(--accent);background:var(--accent-bg);}
+.sv{font-size:24px;font-weight:700;line-height:1;}
+.sc.hi .sv{color:var(--accent-l);}
+.sk{font-size:11px;color:var(--muted);margin-top:3px;}
+/* Flags */
+.flag{display:flex;align-items:flex-start;gap:9px;padding:9px 11px;background:var(--surface2);border-radius:8px;margin-bottom:6px;}
+.flag:last-child{margin-bottom:0;}
+.fd{width:7px;height:7px;border-radius:50%;margin-top:4px;flex-shrink:0;}
+.fd.r{background:var(--red-l);}
+.fd.y{background:var(--yellow);}
+.fd.g{background:var(--green-l);}
+.ft{font-size:13px;color:var(--muted);line-height:1.45;}
+/* Goals */
+.gi{display:flex;align-items:flex-start;gap:8px;padding:8px 0;border-top:1px solid var(--border);}
+.gi:first-child{border-top:none;padding-top:0;}
+.ga{color:var(--accent-l);font-size:13px;margin-top:1px;flex-shrink:0;}
+.gt{font-size:13px;color:var(--muted);line-height:1.45;}
+/* Session picker */
+.sg{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:12px;}
+.sb{background:var(--surface2);border:1px solid var(--border);border-radius:9px;padding:12px;cursor:pointer;text-align:left;transition:border-color .15s,background .15s;}
+.sb.sel{border-color:var(--accent);background:var(--accent-bg);}
+.sn{font-size:10px;color:var(--muted);margin-bottom:2px;}
+.st{font-size:13px;font-weight:600;}
+.sf{font-size:11px;color:var(--muted);}
+/* Exercise logger */
+.el{display:flex;flex-direction:column;gap:8px;}
+.ei{background:var(--surface2);border:1px solid var(--border);border-radius:9px;overflow:hidden;}
+.eh{display:flex;align-items:center;justify-content:space-between;padding:13px 14px;cursor:pointer;}
+.en{font-size:14px;font-weight:500;}
+.ec{font-size:12px;color:var(--muted);}
+.eb{padding:0 14px 13px;display:none;}
+.eb.open{display:block;}
+.chips{display:flex;flex-wrap:wrap;gap:5px;margin-bottom:10px;min-height:26px;}
+.chip{background:var(--accent-bg);border:1px solid rgba(99,102,241,.35);border-radius:6px;padding:3px 8px;font-size:12px;color:var(--accent-l);display:flex;align-items:center;gap:5px;}
+.cdel{cursor:pointer;color:var(--muted);font-size:11px;line-height:1;}
+.si{display:flex;gap:7px;align-items:flex-end;}
+.sinp{flex:1;background:var(--surface);border:1px solid var(--border);border-radius:7px;padding:11px 10px;font-size:16px;color:var(--text);text-align:center;-webkit-appearance:none;appearance:none;}
+.sinp:focus{outline:none;border-color:var(--accent);}
+.ilabel{font-size:10px;color:var(--dim);text-align:center;margin-top:4px;}
+.sadd{background:var(--accent);border:none;border-radius:7px;padding:11px 14px;color:#fff;font-size:14px;font-weight:700;cursor:pointer;white-space:nowrap;}
+.sadd:active{background:var(--accent-l);}
+/* Buttons */
+.bp{width:100%;background:var(--accent);color:#fff;border:none;border-radius:9px;padding:15px;font-size:15px;font-weight:700;cursor:pointer;margin-top:12px;}
+.bp:active{opacity:.85;}
+.bs{width:100%;background:var(--surface2);color:var(--muted);border:1px solid var(--border);border-radius:9px;padding:13px;font-size:14px;font-weight:500;cursor:pointer;margin-top:8px;}
+/* History */
+.hi-item{background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:14px;margin-bottom:8px;cursor:pointer;}
+.hi-hdr{display:flex;justify-content:space-between;align-items:flex-start;}
+.hi-name{font-size:15px;font-weight:600;}
+.hi-date{font-size:12px;color:var(--muted);text-align:right;}
+.hi-meta{font-size:12px;color:var(--muted);margin-top:3px;}
+.hi-det{margin-top:11px;border-top:1px solid var(--border);padding-top:11px;display:none;}
+.hi-det.open{display:block;}
+.hi-ex{margin-bottom:9px;}
+.hi-ex:last-child{margin-bottom:0;}
+.hi-exn{font-size:13px;font-weight:500;margin-bottom:4px;}
+.hi-sets{display:flex;flex-wrap:wrap;gap:4px;}
+.hi-set{background:var(--surface2);border-radius:5px;padding:3px 8px;font-size:12px;color:var(--muted);}
+.del-btn{background:none;border:none;color:var(--dim);font-size:12px;cursor:pointer;padding:2px 6px;margin-top:6px;border-radius:5px;}
+.del-btn:active{background:var(--red-bg);color:var(--red-l);}
+/* Split */
+.spd{background:var(--surface);border:1px solid var(--border);border-radius:10px;margin-bottom:8px;overflow:hidden;}
+.sph{display:flex;align-items:center;justify-content:space-between;padding:13px 14px;cursor:pointer;}
+.spl{display:flex;align-items:center;gap:10px;}
+.spnum{width:28px;height:28px;border-radius:7px;background:var(--accent);color:#fff;font-size:12px;font-weight:800;display:flex;align-items:center;justify-content:center;flex-shrink:0;}
+.spnum.rest{background:var(--surface2);color:var(--muted);}
+.spti{font-size:14px;font-weight:600;}
+.spfo{font-size:11px;color:var(--muted);}
+.spch{color:var(--dim);font-size:11px;transition:transform .2s;}
+.spexs{padding:0 14px 12px;display:none;}
+.spexs.open{display:block;}
+.spex{display:flex;align-items:center;gap:9px;padding:7px 0;border-top:1px solid var(--border);}
+.spexn{width:19px;height:19px;border-radius:4px;background:var(--surface2);color:var(--muted);font-size:10px;font-weight:700;display:flex;align-items:center;justify-content:center;flex-shrink:0;}
+/* Strength cards */
+.strc{background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:13px 14px;margin-bottom:8px;}
+.strh{display:flex;align-items:center;justify-content:space-between;margin-bottom:7px;}
+.strn{font-size:14px;font-weight:600;}
+.strl{font-size:11px;font-weight:600;padding:2px 8px;border-radius:4px;}
+.strl.g{background:var(--green-bg);color:var(--green-l);}
+.strl.b{background:var(--red-bg);color:var(--red-l);}
+.strl.n{background:var(--surface2);color:var(--muted);}
+.dots{display:flex;gap:4px;margin-bottom:7px;}
+.dot{width:8px;height:8px;border-radius:2px;background:var(--surface2);border:1px solid var(--border);}
+.dot.og{background:var(--green-l);border-color:var(--green-l);}
+.dot.ob{background:var(--red-l);border-color:var(--red-l);}
+.strnt{font-size:12px;color:var(--muted);line-height:1.5;}
+/* Philo */
+.phi{display:flex;align-items:flex-start;gap:10px;padding:8px 0;border-top:1px solid var(--border);}
+.phi:first-child{border-top:none;padding-top:0;}
+.phi-i{font-size:14px;flex-shrink:0;margin-top:1px;}
+.phi-t{font-size:13px;color:var(--muted);line-height:1.45;}
+/* Notes */
+.nta{width:100%;background:var(--surface2);border:1px solid var(--border);border-radius:8px;padding:12px;font-size:14px;color:var(--text);resize:none;min-height:100px;margin-top:6px;font-family:inherit;}
+.nta:focus{outline:none;border-color:var(--accent);}
+.nhint{font-size:11px;color:var(--dim);margin-top:6px;}
+/* Toast */
+.toast{position:fixed;bottom:88px;left:50%;transform:translateX(-50%);background:var(--surface2);border:1px solid var(--border);border-radius:8px;padding:10px 18px;font-size:13px;z-index:100;opacity:0;transition:opacity .2s;pointer-events:none;white-space:nowrap;box-shadow:0 4px 20px rgba(0,0,0,.4);}
+.toast.show{opacity:1;}
+/* Empty */
+.empty{text-align:center;padding:44px 20px;color:var(--muted);}
+.empty-i{font-size:38px;margin-bottom:10px;}
+.empty-t{font-size:14px;}
+/* Session active header */
+.ash{display:flex;align-items:center;justify-content:space-between;margin-bottom:14px;}
+.asn{font-size:17px;font-weight:700;}
+.asf{font-size:12px;color:var(--muted);margin-top:2px;}
+.can{background:none;border:none;color:var(--muted);font-size:13px;cursor:pointer;padding:5px 8px;border-radius:6px;}
+.can:active{background:var(--surface2);}
 </style>
 </head>
 <body>
-<div class="hdr">
-  <div class="hdr-top">
-    <div class="logo">
-      <div class="logo-icon">🏋</div>
-      <div>
-        <div class="logo-text">IRON LOG</div>
-        <div class="logo-sub">BODYBUILDING COACH</div>
+<div class="app">
+  <div class="top-bar">
+    <div class="logo">IRON LOG</div>
+    <div class="hdr-date" id="hdr-date"></div>
+  </div>
+
+  <div class="content">
+
+    <!-- TODAY -->
+    <div class="tab active" id="tab-today">
+      <div class="stat-row">
+        <div class="sc hi">
+          <div class="sv" id="st-sessions">—</div>
+          <div class="sk">Sessions Logged</div>
+        </div>
+        <div class="sc">
+          <div class="sv" id="st-streak">—</div>
+          <div class="sk">Day Streak</div>
+        </div>
+        <div class="sc">
+          <div class="sv">6'5"</div>
+          <div class="sk">Height</div>
+        </div>
+        <div class="sc">
+          <div class="sv">~90 min</div>
+          <div class="sk">Avg Session</div>
+        </div>
+      </div>
+
+      <div class="sl">Coaching Flags</div>
+      <div class="card">
+        <div class="flag"><div class="fd r"></div><div class="ft">OHP is the primary weak point — prioritize technique and small wins here.</div></div>
+        <div class="flag"><div class="fd y"></div><div class="ft">Pull-up endurance is below expected. Will improve naturally as the cut progresses.</div></div>
+        <div class="flag"><div class="fd g"></div><div class="ft">Chest pressing numbers are strong given the mechanical disadvantage at 6'5".</div></div>
+      </div>
+
+      <div class="sl">Phase Goals</div>
+      <div class="card">
+        <div class="gi"><div class="ga">›</div><div class="gt">Primary goal is lean mass retention, not progression. Muscle held through a cut is a win.</div></div>
+        <div class="gi"><div class="ga">›</div><div class="gt">Pull-up endurance improves naturally as bodyweight drops. Track the cliff, not just set 1.</div></div>
+        <div class="gi"><div class="ga">›</div><div class="gt">Days 3–6 unlogged — full baseline after one complete rotation.</div></div>
       </div>
     </div>
-    <span class="badge-cut">⚡ CUT PHASE</span>
-  </div>
-  <div class="tabs">
-    <button class="tab active" onclick="showTab('dash')">Dashboard</button>
-    <button class="tab" onclick="showTab('lifts')">Lift Tracker</button>
-    <button class="tab" onclick="showTab('split')">The Split</button>
-    <button class="tab" onclick="showTab('coach')">Coach's Corner</button>
-  </div>
-</div>
 
-<div class="content">
+    <!-- LOG -->
+    <div class="tab" id="tab-log">
+      <div id="log-picker">
+        <div class="sl" style="margin-top:0">Select Session</div>
+        <div class="sg" id="sg"></div>
+        <button class="bp" onclick="startSession()">Start Session →</button>
+      </div>
+      <div id="log-active" style="display:none">
+        <div class="ash">
+          <div>
+            <div class="asn" id="asn"></div>
+            <div class="asf" id="asf"></div>
+          </div>
+          <button class="can" onclick="cancelSession()">Cancel</button>
+        </div>
+        <div class="el" id="el"></div>
+        <button class="bp" onclick="finishSession()">Finish &amp; Save Session</button>
+        <button class="bs" onclick="cancelSession()">Discard</button>
+      </div>
+    </div>
 
-<!-- DASHBOARD -->
-<div id="tab-dash">
-  <div class="section">
-    <div class="grid-6">
-      <div class="stat-card"><div class="stat-label">AGE</div><div class="stat-val">24</div></div>
-      <div class="stat-card"><div class="stat-label">HEIGHT</div><div class="stat-val">6'5"</div></div>
-      <div class="stat-card"><div class="stat-label">WEIGHT</div><div class="stat-val">235 lbs</div></div>
-      <div class="stat-card"><div class="stat-label">BODY FAT</div><div class="stat-val">~22%</div></div>
-      <div class="stat-card"><div class="stat-label">FREQUENCY</div><div class="stat-val">6 days</div></div>
-      <div class="stat-card"><div class="stat-label">SESSION</div><div class="stat-val">90+ min</div></div>
+    <!-- HISTORY -->
+    <div class="tab" id="tab-history">
+      <div class="sl" style="margin-top:0">Session History</div>
+      <div id="hist-list"></div>
     </div>
-  </div>
-  <div class="section">
-    <div class="grid-4">
-      <div class="metric-card"><div class="metric-label">Days Logged</div><div class="metric-val" style="color:#4ade80">2 / 6</div></div>
-      <div class="metric-card"><div class="metric-label">Exercises Tracked</div><div class="metric-val" style="color:#f97316">12</div></div>
-      <div class="metric-card"><div class="metric-label">Est. Flat Bench 1RM</div><div class="metric-val" style="color:#60a5fa">~255 lbs</div></div>
-      <div class="metric-card"><div class="metric-label">OHP 1RM ⚠ Weak Point</div><div class="metric-val" style="color:#f87171">~117 lbs</div></div>
-    </div>
-  </div>
-  <div class="section">
-    <div class="label">Current Week</div>
-    <div class="grid-7">
-      <div class="day-cell logged"><div class="day-num">D1</div><div class="day-name">Push A</div><div class="day-check">✓ Mar 23</div></div>
-      <div class="day-cell logged"><div class="day-num">D2</div><div class="day-name">Pull A</div><div class="day-check">✓ Mar 25</div></div>
-      <div class="day-cell"><div class="day-num">D3</div><div class="day-name">Legs A</div><div class="day-pending">Pending</div></div>
-      <div class="day-cell"><div class="day-num">D4</div><div class="day-name">Push B</div><div class="day-pending">Pending</div></div>
-      <div class="day-cell"><div class="day-num">D5</div><div class="day-name">Pull B</div><div class="day-pending">Pending</div></div>
-      <div class="day-cell"><div class="day-num">D6</div><div class="day-name">Legs B</div><div class="day-pending">Pending</div></div>
-      <div class="day-cell rest"><div class="day-num">D7</div><div class="day-name">REST</div></div>
-    </div>
-  </div>
-  <div class="section">
-    <div class="label">Coaching Flags — Top Priorities</div>
-    <div class="flag-card">
-      <div class="flag-num">1</div>
-      <div><div class="flag-name">Weighted Pull-Up <span class="flag-badge">HIGH PRIORITY</span></div><div class="flag-note">Rep cliff is too steep: 6↲5→4→2. Endurance, not max strength, is the gap. Next target: 6/5/5/3. Narrow the cliff before adding load.</div></div>
-    </div>
-    <div class="flag-card">
-      <div class="flag-num">2</div>
-      <div><div class="flag-name">Barbell OHP <span class="flag-badge">HIGH PRIORITY</span></div><div class="flag-note">1RM ~117 lbs. Expected ~140–145 for your bodyweight. Clearest strength gap in the program. Priority lift to develop as the cut continues.</div></div>
-    </div>
-    <div class="flag-card med">
-      <div class="flag-num">3</div>
-      <div><div class="flag-name">Incline Press Set 4 <span class="flag-badge">WATCH</span></div><div class="flag-note">Set 4 collapsed to 3 reps while sets 1–3 held 5–6. Endurance within the working set needs work. Target 6/6/6/5 before moving to 190.</div></div>
-    </div>
-  </div>
-  <div class="goal-card">
-    <div class="label">Phase Goals</div>
-    <div class="goal-item"><span class="arrow">›</span>Reduce body fat from ~22% while preserving lean mass</div>
-    <div class="goal-item"><span class="arrow">›</span>Build strength across all major compound lifts</div>
-    <div class="goal-item"><span class="arrow">›</span>Bring OHP up to match overall strength level</div>
-    <div class="goal-item"><span class="arrow">›</span>Priority: chest, back, shoulders, arms, legs</div>
-  </div>
-</div>
 
-<!-- LIFT TRACKER -->
-<div id="tab-lifts" class="hidden">
-  <div class="tabs-sub">
-    <button class="tab-sub active" onclick="showSession('push')">Push A — Mar 23</button>
-    <button class="tab-sub" onclick="showSession('pull')">Pull A — Mar 25</button>
-  </div>
-  <div id="session-push">
-    <div style="display:flex;align-items:center;gap:8px;margin-bottom:12px"><div style="width:8px;height:8px;border-radius:50%;background:#4ade80"></div><span style="font-size:11px;color:#6b7280">Day 1 — Push A · Chest Focus · March 23, 2026</span></div>
-    <div class="ex-card watch"><div class="ex-header"><div class="ex-name">⚠ Incline Barbell Press</div><div class="ex-meta"><span class="ex-rm">1RM ~227 lbs</span><span class="ex-badge badge-watch">WATCH</span></div></div><div class="sets"><span class="set-pill">185×6</span><span class="set-pill">185×5</span><span class="set-pill">185×6</span><span class="set-pill">185×3</span></div><div class="ex-next"><span class="next-arrow">→ </span>Target 6/6/6/5 at 185 before moving to 190. Set 4 endurance is the limiter.</div></div>
-    <div class="ex-card progressing"><div class="ex-header"><div class="ex-name">Flat DB Press</div><div class="ex-meta"><span class="ex-rm">1RM ~96/hand</span><span class="ex-badge badge-progressing">PROGRESSING</span></div></div><div class="sets"><span class="set-pill">85×4</span><span class="set-pill">85×7</span><span class="set-pill">70×9</span></div><div class="ex-next"><span class="next-arrow">→ </span>Reset to 80 lbs across all 3 sets for consistency, then return to 85s.</div></div>
-    <div class="ex-card good"><div class="ex-header"><div class="ex-name">Cable Fly Low-High</div><div class="ex-meta"><span class="ex-badge badge-good">ON TRACK</span></div></div><div class="sets"><span class="set-pill">13×15</span><span class="set-pill">13×12</span><span class="set-pill">13×12</span></div><div class="ex-next"><span class="next-arrow">→ </span>Hold at 13 lbs until 3×15 is clean. Then move to 15 lbs.</div></div>
-    <div class="ex-card flagged"><div class="ex-header"><div class="ex-name">⚠ Barbell OHP</div><div class="ex-meta"><span class="ex-rm">1RM ~117 lbs</span><span class="ex-badge badge-flagged">FLAGGED</span></div></div><div class="sets"><span class="set-pill">95×6</span><span class="set-pill">95×8</span><span class="set-pill">95×6</span></div><div class="ex-next"><span class="next-arrow">→ </span>Target 3×8 at 95 before bumping to 100. Late warm-up effect on set 2 — stay consistent.</div></div>
-    <div class="ex-card good"><div class="ex-header"><div class="ex-name">Cable Lateral Raise</div><div class="ex-meta"><span class="ex-badge badge-good">ON TRACK</span></div></div><div class="sets"><span class="set-pill">13×15</span><span class="set-pill">13×12</span><span class="set-pill">10×15</span><span class="set-pill">10×15</span></div><div class="ex-next"><span class="next-arrow">→ </span>Long-term goal: 4 sets same weight for 15+ reps. Patience required here.</div></div>
-    <div class="ex-card progressing"><div class="ex-header"><div class="ex-name">Tricep Pushdown</div><div class="ex-meta"><span class="ex-badge badge-progressing">PROGRESSING</span></div></div><div class="sets"><span class="set-pill">80×12</span><span class="set-pill">80×9</span><span class="set-pill">70×11</span></div><div class="ex-next"><span class="next-arrow">→ </span>Hold set 1 at 80. Work set 2 up to 10–11 reps before using the drop.</div></div>
-  </div>
-  <div id="session-pull" class="hidden">
-    <div style="display:flex;align-items:center;gap:8px;margin-bottom:12px"><div style="width:8px;height:8px;border-radius:50%;background:#4ade80"></div><span style="font-size:11px;color:#6b7280">Day 2 — Pull A · Back Thickness · March 25, 2026</span></div>
-    <div class="ex-card flagged"><div class="ex-header"><div class="ex-name">⚠ Weighted Pull-Up</div><div class="ex-meta"><span class="ex-badge badge-flagged">FLAGGED</span></div></div><div class="sets"><span class="set-pill">BW×6</span><span class="set-pill">BW×5</span><span class="set-pill">BW×4</span><span class="set-pill">BW×2</span><span style="font-size:11px;color:#6b7280;align-self:center">(BW=235lbs)</span></div><div class="ex-next"><span class="next-arrow">→ </span>Next target: 6/5/5/3. When 4×6 clean at bodyweight, add 10 lbs. Cliff is too steep.</div></div>
-    <div class="ex-card good"><div class="ex-header"><div class="ex-name">Barbell Row</div><div class="ex-meta"><span class="ex-rm">1RM ~196 lbs</span><span class="ex-badge badge-good">ON TRACK</span></div></div><div class="sets"><span class="set-pill">135×10</span><span class="set-pill">155×8</span><span class="set-pill">155×8</span><span class="set-pill">155×7</span></div><div class="ex-next"><span class="next-arrow">→ </span>One session away from 4×8 at 155. Then move to 165. Back thickness is a strength.</div></div>
-    <div class="ex-card progressing"><div class="ex-header"><div class="ex-name">Seated Cable Row</div><div class="ex-meta"><span class="ex-badge badge-progressing">PROGRESSING</span></div></div><div class="sets"><span class="set-pill">145×9</span><span class="set-pill">130×9</span><span class="set-pill">130×8</span></div><div class="ex-next"><span class="next-arrow">→ </span>Opened too heavy. Use 130 all 3 sets next session. Target 3×12 before moving up.</div></div>
-    <div class="ex-card good"><div class="ex-header"><div class="ex-name">Face Pull</div><div class="ex-meta"><span class="ex-badge badge-good">ON TRACK</span></div></div><div class="sets"><span class="set-pill">70×16</span><span class="set-pill">70×15</span><span class="set-pill">70×15</span></div><div class="ex-next"><span class="next-arrow">→ </span>Above target range. Bump to 75 lbs next session.</div></div>
-    <div class="ex-card progressing"><div class="ex-header"><div class="ex-name">Incline DB Curl</div><div class="ex-meta"><span class="ex-badge badge-progressing">PROGRESSING</span></div></div><div class="sets"><span class="set-pill">30×9</span><span class="set-pill">30×9</span><span class="set-pill">25×9</span></div><div class="ex-next"><span class="next-arrow">→ </span>Consistent across sets — good sign. Hold at 30 until hitting 3×11, then progress.</div></div>
-    <div class="ex-card progressing"><div class="ex-header"><div class="ex-name">Hammer Curl</div><div class="ex-meta"><span class="ex-badge badge-progressing">PROGRESSING</span></div></div><div class="sets"><span class="set-pill">30×12</span><span class="set-pill">30×12</span><span class="set-pill">30×10</span></div><div class="ex-next"><span class="next-arrow">→ </span>Nearly there. Hit 3×12 at 30 clean next session, then move to 35s.</div></div>
-  </div>
-  <div class="pending-box"><div class="pending-icon">⏱</div><div class="pending-text">Days 3–6 pending. Legs A, Push B, Pull B, Legs B data incoming.</div><div class="pending-sub">Full baseline after first complete rotation.</div></div>
-</div>
+    <!-- SPLIT -->
+    <div class="tab" id="tab-split">
+      <div class="sl" style="margin-top:0">6-Day PPL Split</div>
+      <div id="split-list"></div>
+    </div>
 
-<!-- THE SPLIT -->
-<div id="tab-split" class="hidden">
-  <p style="font-size:11px;color:#6b7280;margin-bottom:12px">PPL Double — 6 training days, 1 rest. Tap to expand exercises.</p>
-  <div class="split-day logged" onclick="toggleSplit(this)"><div class="split-hdr"><div style="display:flex;align-items:center"><div class="split-num">1</div><div><div class="split-title">Push A</div><div class="split-focus">Chest Focus</div></div></div><span class="split-check">✓ Mar 23 ›</span></div><div class="split-exs hidden"><div class="split-ex"><span class="split-ex-num">1</span>Incline Barbell Press</div><div class="split-ex"><span class="split-ex-num">2</span>Flat DB Press</div><div class="split-ex"><span class="split-ex-num">3</span>Cable Fly Low-High</div><div class="split-ex"><span class="split-ex-num">4</span>Barbell OHP</div><div class="split-ex"><span class="split-ex-num">5</span>Cable Lateral Raise</div><div class="split-ex"><span class="split-ex-num">6</span>Tricep Pushdown</div></div></div>
-  <div class="split-day logged" onclick="toggleSplit(this)"><div class="split-hdr"><div style="display:flex;align-items:center"><div class="split-num">2</div><div><div class="split-title">Pull A</div><div class="split-focus">Back Thickness</div></div></div><span class="split-check">✓ Mar 25 ›</span></div><div class="split-exs hidden"><div class="split-ex"><span class="split-ex-num">1</span>Weighted Pull-Up</div><div class="split-ex"><span class="split-ex-num">2</span>Barbell Row</div><div class="split-ex"><span class="split-ex-num">3</span>Seated Cable Row</div><div class="split-ex"><span class="split-ex-num">4</span>Face Pull</div><div class="split-ex"><span class="split-ex-num">5</span>Incline DB Curl</div><div class="split-ex"><span class="split-ex-num">6</span>Hammer Curl</div></div></div>
-  <div class="split-day" onclick="toggleSplit(this)"><div class="split-hdr"><div style="display:flex;align-items:center"><div class="split-num">3</div><div><div class="split-title">Legs A</div><div class="split-focus">Quad Focus</div></div></div><span class="split-pending">Pending ›</span></div><div class="split-exs hidden"><div class="split-ex"><span class="split-ex-num">1</span>Hack Squat</div><div class="split-ex"><span class="split-ex-num">2</span>Leg Press</div><div class="split-ex"><span class="split-ex-num">3</span>Walking Lunge</div><div class="split-ex"><span class="split-ex-num">4</span>Leg Extension</div><div class="split-ex"><span class="split-ex-num">5</span>Lying Leg Curl</div><div class="split-ex"><span class="split-ex-num">6</span>Standing Calf Raise</div></div></div>
-  <div class="split-day" onclick="toggleSplit(this)"><div class="split-hdr"><div style="display:flex;align-items:center"><div class="split-num">4</div><div><div class="split-title">Push B</div><div class="split-focus">Shoulder Focus</div></div></div><span class="split-pending">Pending ›</span></div><div class="split-exs hidden"><div class="split-ex"><span class="split-ex-num">1</span>Seated DB OHP</div><div class="split-ex"><span class="split-ex-num">2</span>Incline DB Press</div><div class="split-ex"><span class="split-ex-num">3</span>Cable Lateral Raise</div><div class="split-ex"><span class="split-ex-num">4</span>Machine Chest Press</div><div class="split-ex"><span class="split-ex-num">5</span>Rear Delt Fly</div><div class="split-ex"><span class="split-ex-num">6</span>Overhead Tricep Extension</div></div></div>
-  <div class="split-day" onclick="toggleSplit(this)"><div class="split-hdr"><div style="display:flex;align-items:center"><div class="split-num">5</div><div><div class="split-title">Pull B</div><div class="split-focus">Width & Arms</div></div></div><span class="split-pending">Pending ›</span></div><div class="split-exs hidden"><div class="split-ex"><span class="split-ex-num">1</span>Lat Pulldown</div><div class="split-ex"><span class="split-ex-num">2</span>Single Arm DB Row</div><div class="split-ex"><span class="split-ex-num">3</span>Wide Grip Cable Row</div><div class="split-ex"><span class="split-ex-num">4</span>Straight Arm Pulldown</div><div class="split-ex"><span class="split-ex-num">5</span>EZ Bar Curl</div><div class="split-ex"><span class="split-ex-num">6</span>Cable Curl</div></div></div>
-  <div class="split-day" onclick="toggleSplit(this)"><div class="split-hdr"><div style="display:flex;align-items:center"><div class="split-num">6</div><div><div class="split-title">Legs B</div><div class="split-focus">Ham & Glute</div></div></div><span class="split-pending">Pending ›</span></div><div class="split-exs hidden"><div class="split-ex"><span class="split-ex-num">1</span>Romanian Deadlift</div><div class="split-ex"><span class="split-ex-num">2</span>Lying Leg Curl</div><div class="split-ex"><span class="split-ex-num">3</span>Bulgarian Split Squat</div><div class="split-ex"><span class="split-ex-num">4</span>Leg Press High Foot</div><div class="split-ex"><span class="split-ex-num">5</span>Hip Thrust</div><div class="split-ex"><span class="split-ex-num">6</span>Seated Calf Raise</div></div></div>
-  <div class="split-day rest"><div class="split-hdr"><div style="display:flex;align-items:center"><div class="split-num" style="color:#374151">R</div><div><div class="split-title" style="color:#374151">REST</div><div class="split-focus">Recovery</div></div></div></div></div>
-</div>
+    <!-- COACH -->
+    <div class="tab" id="tab-coach">
+      <div class="sl" style="margin-top:0">Strength Assessment</div>
 
-<!-- COACH'S CORNER -->
-<div id="tab-coach" class="hidden">
-  <div class="section">
-    <div class="label">Strength Assessment</div>
-    <div class="str-card"><div class="str-header"><div><div class="str-name">✅ Chest Pressing</div><div class="str-label good">Int → Advanced</div></div><div class="dots"><div class="dot on good"></div><div class="dot on good"></div><div class="dot on good"></div><div class="dot on good"></div><div class="dot"></div></div></div><div class="str-note">~255 flat estimated. Long arms at 6'5" = real mechanical disadvantage. These numbers are more impressive in context.</div></div>
-    <div class="str-card"><div class="str-header"><div><div class="str-name">⚠️ Overhead Press</div><div class="str-label bad">Low Intermediate ⚠</div></div><div class="dots"><div class="dot on bad"></div><div class="dot on bad"></div><div class="dot"></div><div class="dot"></div><div class="dot"></div></div></div><div class="str-note">1RM ~117. Expected 140–145 at your bodyweight. Primary weak point to address.</div></div>
-    <div class="str-card"><div class="str-header"><div><div class="str-name">✅ Back Thickness</div><div class="str-label good">Solid Intermediate</div></div><div class="dots"><div class="dot on good"></div><div class="dot on good"></div><div class="dot on good"></div><div class="dot on good"></div><div class="dot"></div></div></div><div class="str-note">Row 1RM ~196. Back thickness is not a weakness — consistent three-set effort at 155.</div></div>
-    <div class="str-card"><div class="str-header"><div><div class="str-name">⚠️ Pull-Up Endurance</div><div class="str-label bad">Below Expected ⚠</div></div><div class="dots"><div class="dot on bad"></div><div class="dot on bad"></div><div class="dot"></div><div class="dot"></div><div class="dot"></div></div></div><div class="str-note">Max strength is likely fine. Endurance and bodyweight are the issue. Will improve as cut progresses.</div></div>
-    <div class="str-card"><div class="str-header"><div><div class="str-name">✅ Arms</div><div class="str-label good">On Track</div></div><div class="dots"><div class="dot on good"></div><div class="dot on good"></div><div class="dot on good"></div><div class="dot"></div><div class="dot"></div></div></div><div class="str-note">Consistency across sets is the strong point. Numbers appropriate for rep ranges.</div></div>
-    <div class="str-card"><div class="str-header"><div><div class="str-name">— Legs</div><div class="str-label na">No Data Yet</div></div><div class="dots"><div class="dot"></div><div class="dot"></div><div class="dot"></div><div class="dot"></div><div class="dot"></div></div></div><div class="str-note">Days 3–6 unlogged. Full picture after first full rotation.</div></div>
-  </div>
-  <div class="phil-card">
-    <div class="label">🔥 Coaching Philosophy — Cut Phase</div>
-    <div class="phil-item"><span style="color:#f97316">★</span>Primary goal is lean mass retention, not progression. Muscle held through a cut is a win.</div>
-    <div class="phil-item"><span style="color:#4ade80">↑</span>Still push for small rep PRs where possible. Rep PRs count as progress.</div>
-    <div class="phil-item"><span style="color:#60a5fa">◎</span>Weight increases ONLY when the top of the rep range is hit cleanly across ALL working sets.</div>
-    <div class="phil-item"><span style="color:#6b7280">—</span>Cardio and diet are yours. I own the iron. Clean separation keeps both optimized.</div>
-  </div>
-  <div class="goal-card" style="margin-bottom:14px">
-    <div class="label">Program Notes</div>
-    <div class="goal-item"><span class="arrow">›</span>No barbell back squat — knee restriction. Hack Squat is the primary quad driver on Legs A.</div>
-    <div class="goal-item"><span class="arrow">›</span>6'5" frame = long levers. Rep quality matters more than raw numbers.</div>
-    <div class="goal-item"><span class="arrow">›</span>OHP is the priority weak point. Small wins here compound fastest right now.</div>
-    <div class="goal-item"><span class="arrow">›</span>Pull-up endurance improves naturally as bodyweight drops. Track the cliff, not just set 1.</div>
-    <div class="goal-item"><span class="arrow">›</span>Days 3–6 unlogged — full baseline after one complete rotation.</div>
-  </div>
-  <div class="msg-card">
-    <div class="msg-label">💬 Notes for Your Coach</div>
-    <textarea class="msg-ta" placeholder="Log how you're feeling, flag something from a session, or write a question to bring into the conversation..."></textarea>
-    <div class="msg-hint">Bring these notes into the chat — your coach is right here in the conversation.</div>
-  </div>
-</div>
+      <div class="strc">
+        <div class="strh"><div class="strn">✓ Chest Pressing</div><div class="strl g">Int → Advanced</div></div>
+        <div class="dots"><div class="dot og"></div><div class="dot og"></div><div class="dot og"></div><div class="dot og"></div><div class="dot"></div></div>
+        <div class="strnt">~255 flat estimated. Long arms at 6'5" = real mechanical disadvantage. These numbers are more impressive in context.</div>
+      </div>
 
+      <div class="strc">
+        <div class="strh"><div class="strn">⚠ Overhead Press</div><div class="strl b">Low Intermediate ⚠</div></div>
+        <div class="dots"><div class="dot ob"></div><div class="dot ob"></div><div class="dot"></div><div class="dot"></div><div class="dot"></div></div>
+        <div class="strnt">1RM ~117. Expected 140–145. Primary weak point to address.</div>
+      </div>
+
+      <div class="strc">
+        <div class="strh"><div class="strn">✓ Back Thickness</div><div class="strl g">Solid Intermediate</div></div>
+        <div class="dots"><div class="dot og"></div><div class="dot og"></div><div class="dot og"></div><div class="dot og"></div><div class="dot"></div></div>
+        <div class="strnt">Row 1RM ~196. Not a weakness — consistent 3-set effort at 155.</div>
+      </div>
+
+      <div class="strc">
+        <div class="strh"><div class="strn">⚠ Pull-Up Endurance</div><div class="strl b">Below Expected ⚠</div></div>
+        <div class="dots"><div class="dot ob"></div><div class="dot ob"></div><div class="dot"></div><div class="dot"></div><div class="dot"></div></div>
+        <div class="strnt">Max strength is likely fine. Endurance and bodyweight are the issue. Improves as cut progresses.</div>
+      </div>
+
+      <div class="strc">
+        <div class="strh"><div class="strn">✓ Arms</div><div class="strl g">On Track</div></div>
+        <div class="dots"><div class="dot og"></div><div class="dot og"></div><div class="dot og"></div><div class="dot"></div><div class="dot"></div></div>
+        <div class="strnt">Consistency across sets is the strong point. Numbers appropriate for rep ranges.</div>
+      </div>
+
+      <div class="strc">
+        <div class="strh"><div class="strn">— Legs</div><div class="strl n">No Data Yet</div></div>
+        <div class="dots"><div class="dot"></div><div class="dot"></div><div class="dot"></div><div class="dot"></div><div class="dot"></div></div>
+        <div class="strnt">Days 3–6 unlogged. Full picture after first full rotation.</div>
+      </div>
+
+      <div class="sl">Coaching Philosophy — Cut Phase</div>
+      <div class="card">
+        <div class="phi"><div class="phi-i">🔥</div><div class="phi-t">Primary goal is lean mass retention, not progression. Muscle held through a cut is a win.</div></div>
+        <div class="phi"><div class="phi-i">↑</div><div class="phi-t">Still push for small rep PRs where possible. Rep PRs count as progress.</div></div>
+        <div class="phi"><div class="phi-i">◈</div><div class="phi-t">Weight increases ONLY when the top of the rep range is hit cleanly across ALL working sets.</div></div>
+        <div class="phi"><div class="phi-i">–</div><div class="phi-t">Cardio and diet are yours. I own the iron. Clean separation keeps both optimized.</div></div>
+      </div>
+
+      <div class="sl">Program Notes</div>
+      <div class="card">
+        <div class="gi"><div class="ga">›</div><div class="gt">No barbell back squat — knee restriction. Hack Squat is the primary quad driver on Legs A.</div></div>
+        <div class="gi"><div class="ga">›</div><div class="gt">6'5" frame = long levers. Rep quality matters more than raw numbers.</div></div>
+        <div class="gi"><div class="ga">›</div><div class="gt">OHP is the priority weak point. Small wins here compound fastest right now.</div></div>
+        <div class="gi"><div class="ga">›</div><div class="gt">Pull-up endurance improves naturally as bodyweight drops. Track the cliff, not just set 1.</div></div>
+      </div>
+
+      <div class="sl">📋 Notes for Your Coach</div>
+      <div class="card">
+        <textarea class="nta" id="coach-notes" placeholder="Log how you're feeling, flag something from a session, or write a question..."></textarea>
+        <div class="nhint">Bring these notes into the chat — your coach is right here.</div>
+      </div>
+    </div>
+
+  </div><!-- /content -->
+
+  <nav class="nav">
+    <button class="nb active" onclick="switchTab('today',this)"><span class="ni">⚡</span>Today</button>
+    <button class="nb" onclick="switchTab('log',this)"><span class="ni">＋</span>Log</button>
+    <button class="nb" onclick="switchTab('history',this)"><span class="ni">📈</span>History</button>
+    <button class="nb" onclick="switchTab('split',this)"><span class="ni">📋</span>Split</button>
+    <button class="nb" onclick="switchTab('coach',this)"><span class="ni">🎯</span>Coach</button>
+  </nav>
 </div>
-<div class="footer">2 of 6 days logged · 12 exercises tracked · Mar 25, 2026</div>
+<div class="toast" id="toast"></div>
 
 <script>
-function showTab(t){
-  document.querySelectorAll('[id^="tab-"]').forEach(el=>el.classList.add('hidden'));
-  document.getElementById('tab-'+t).classList.remove('hidden');
-  document.querySelectorAll('.tab').forEach(el=>el.classList.remove('active'));
-  event.target.classList.add('active');
+const SESSIONS=[
+  {id:'push-a',num:1,name:'Push A',focus:'Chest Focus',exs:['Incline Barbell Press','Flat DB Press','Cable Fly Low-High','Barbell OHP','Cable Lateral Raise','Tricep Pushdown']},
+  {id:'pull-a',num:2,name:'Pull A',focus:'Back Thickness',exs:['Weighted Pull-Up','Barbell Row','Seated Cable Row','Face Pull','Incline DB Curl','Hammer Curl']},
+  {id:'legs-a',num:3,name:'Legs A',focus:'Quad Focus',exs:['Hack Squat','Bulgarian Split Squat','Leg Press High Foot','Hip Thrust','Seated Calf Raise']},
+  {id:'push-b',num:4,name:'Push B',focus:'Shoulder Focus',exs:['Seated DB Press','Barbell OHP','Lateral Raise','Machine Chest Press','Rear Delt Fly','Overhead Tricep Extension']},
+  {id:'pull-b',num:5,name:'Pull B',focus:'Width & Arms',exs:['Lat Pulldown','Single Arm DB Row','Wide Grip Cable Row','Straight Arm Pulldown','EZ Bar Curl','Cable Curl']},
+  {id:'legs-b',num:6,name:'Legs B',focus:'Ham & Glute',exs:['Romanian Deadlift','Lying Leg Curl','Bulgarian Split Squat','Leg Press High Foot','Hip Thrust','Seated Calf Raise']}
+];
+
+let curSession=null,selId=SESSIONS[0].id,activeSets={};
+
+function getHist(){try{return JSON.parse(localStorage.getItem('il_hist')||'[]')}catch{return[]}}
+function saveHist(h){localStorage.setItem('il_hist',JSON.stringify(h))}
+function getNotes(){return localStorage.getItem('il_notes')||''}
+function saveNotes(v){localStorage.setItem('il_notes',v)}
+
+function seedData(){
+  if(localStorage.getItem('il_seeded'))return;
+  const seed=[
+    {date:'2026-03-25',time:'',sessionId:'pull-a',sessionName:'Pull A',focus:'Back Thickness',exercises:[
+      {name:'Weighted Pull-Up',sets:[{w:0,r:6},{w:0,r:5},{w:0,r:4},{w:0,r:2}]},
+      {name:'Barbell Row',sets:[{w:135,r:10},{w:155,r:8},{w:155,r:8},{w:155,r:7}]},
+      {name:'Seated Cable Row',sets:[{w:145,r:9},{w:130,r:9},{w:130,r:8}]},
+      {name:'Face Pull',sets:[{w:70,r:16},{w:70,r:15},{w:70,r:15}]},
+      {name:'Incline DB Curl',sets:[{w:30,r:9},{w:30,r:9},{w:25,r:9}]},
+      {name:'Hammer Curl',sets:[{w:30,r:12},{w:30,r:12},{w:30,r:10}]}
+    ]},
+    {date:'2026-03-23',time:'',sessionId:'push-a',sessionName:'Push A',focus:'Chest Focus',exercises:[
+      {name:'Incline Barbell Press',sets:[{w:185,r:6},{w:185,r:5},{w:185,r:6},{w:185,r:3}]},
+      {name:'Flat DB Press',sets:[{w:85,r:4},{w:85,r:7},{w:70,r:9}]},
+      {name:'Cable Fly Low-High',sets:[{w:13,r:15},{w:13,r:12},{w:13,r:12}]},
+      {name:'Barbell OHP',sets:[{w:95,r:6},{w:95,r:8},{w:95,r:6}]},
+      {name:'Cable Lateral Raise',sets:[{w:13,r:15},{w:13,r:12},{w:10,r:15},{w:10,r:15}]},
+      {name:'Tricep Pushdown',sets:[{w:80,r:12},{w:80,r:9},{w:70,r:11}]}
+    ]}
+  ];
+  saveHist(seed);
+  localStorage.setItem('il_seeded','1');
 }
-function showSession(s){
-  document.querySelectorAll('[id^="session-"]').forEach(el=>el.classList.add('hidden'));
-  document.getElementById('session-'+s).classList.remove('hidden');
-  document.querySelectorAll('.tab-sub').forEach(el=>el.classList.remove('active'));
-  event.target.classList.add('active');
+
+function fmt(w,r){return(w>0?w+'lb':'BW')+' × '+r}
+
+document.addEventListener('DOMContentLoaded',()=>{
+  seedData();
+  const d=new Date();
+  document.getElementById('hdr-date').textContent=d.toLocaleDateString('en-US',{weekday:'short',month:'short',day:'numeric'});
+  updateStats();
+  renderSG();
+  renderSplit();
+  renderHist();
+  const ta=document.getElementById('coach-notes');
+  ta.value=getNotes();
+  ta.addEventListener('input',()=>saveNotes(ta.value));
+});
+
+function updateStats(){
+  const h=getHist();
+  document.getElementById('st-sessions').textContent=h.length;
+  if(!h.length){document.getElementById('st-streak').textContent='0';return;}
+  const sorted=[...h].sort((a,b)=>new Date(b.date)-new Date(a.date));
+  const today=new Date().toISOString().split('T')[0];
+  let streak=0,check=today;
+  for(const s of sorted){
+    if(s.date===check){streak++;const d2=new Date(check);d2.setDate(d2.getDate()-1);check=d2.toISOString().split('T')[0];}
+    else break;
+  }
+  document.getElementById('st-streak').textContent=streak;
 }
-function toggleSplit(el){
-  const exs=el.querySelector('.split-exs');
-  if(exs)exs.classList.toggle('hidden');
+
+function renderSG(){
+  document.getElementById('sg').innerHTML=SESSIONS.map(s=>`
+    <button class="sb${s.id===selId?' sel':''}" onclick="selectSess('${s.id}')">
+      <div class="sn">Day ${s.num}</div>
+      <div class="st">${s.name}</div>
+      <div class="sf">${s.focus}</div>
+    </button>`).join('');
+}
+
+function selectSess(id){selId=id;renderSG();}
+
+function startSession(){
+  curSession=SESSIONS.find(s=>s.id===selId);
+  activeSets={};
+  curSession.exs.forEach(e=>activeSets[e]=[]);
+  document.getElementById('log-picker').style.display='none';
+  document.getElementById('log-active').style.display='block';
+  document.getElementById('asn').textContent=curSession.name;
+  document.getElementById('asf').textContent=curSession.focus;
+  renderEL();
+}
+
+function cancelSession(){
+  curSession=null;
+  document.getElementById('log-active').style.display='none';
+  document.getElementById('log-picker').style.display='block';
+}
+
+function renderEL(){
+  document.getElementById('el').innerHTML=curSession.exs.map((ex,i)=>`
+    <div class="ei" id="ei${i}">
+      <div class="eh" onclick="toggleEx(${i})">
+        <div class="en">${ex}</div>
+        <div class="ec" id="ec${i}">0 sets</div>
+      </div>
+      <div class="eb" id="eb${i}">
+        <div class="chips" id="ch${i}"></div>
+        <div class="si">
+          <div style="flex:1">
+            <input class="sinp" type="number" id="w${i}" placeholder="135" inputmode="decimal">
+            <div class="ilabel">lbs (blank = BW)</div>
+          </div>
+          <div style="flex:.7">
+            <input class="sinp" type="number" id="r${i}" placeholder="8" inputmode="numeric">
+            <div class="ilabel">reps</div>
+          </div>
+          <button class="sadd" onclick="addSet(${i})">+</button>
+        </div>
+      </div>
+    </div>`).join('');
+}
+
+function toggleEx(i){
+  const b=document.getElementById('eb'+i);
+  const was=b.classList.contains('open');
+  document.querySelectorAll('.eb').forEach(e=>e.classList.remove('open'));
+  if(!was){b.classList.add('open');setTimeout(()=>document.getElementById('w'+i)?.focus(),80);}
+}
+
+function addSet(i){
+  const ex=curSession.exs[i];
+  const wv=document.getElementById('w'+i).value;
+  const rv=document.getElementById('r'+i).value;
+  const r=parseInt(rv);
+  if(!t||r<=0){showToast('Enter reps');return;}
+  const w=parseFloat(wv);
+  activeSets[ex].push({w:isNaN(w)?0:w,r});
+  document.getElementById('r'+i).value='';
+  document.getElementById('r'+i).focus();
+  updateChips(i,ex);
+}
+
+function removeSet(i,j){
+  const ex=curSession.exs[i];
+  activeSets[ex].splice(j,1);
+  updateChips(i,ex);
+}
+
+function updateChips(i,ex){
+  const sets=activeSets[ex];
+  document.getElementById('ec'+i).textContent=sets.length===1?'1 set':sets.length+' sets';
+  document.getElementById('ch'+i).innerHTML=sets.map((s,j)=>`
+    <div class="chip">${fmt(s.w,s.r)}<span class="cdel" onclick="event.stopPropagation();removeSet(${i},${j})">✕</span></div>`).join('');
+}
+
+function finishSession(){
+  const total=Object.values(activeSets).reduce((a,s)=>a+s.length,0);
+  if(!total){showToast('Log at least one set');return;}
+  const rec={
+    date:new Date().toISOString().split('T')[0],
+    time:new Date().toLocaleTimeString('en-US',{hour:'numeric',minute:'2-digit'}),
+    sessionId:curSession.id,sessionName:curSession.name,focus:curSession.focus,
+    exercises:curSession.exs.map(ex=>({name:ex,sets:activeSets[ex]||[]})).filter(e=>e.sets.length)
+  };
+  const h=getHist();h.unshift(rec);saveHist(h);
+  showToast(curSession.name+' saved ✓');
+  cancelSession();updateStats();renderHist();
+}
+
+function renderHist(){
+  const h=getHist();
+  const list=document.getElementById('hist-list');
+  if(!h.length){
+    list.innerHTML='<div class="empty"><div class="empty-i">📭</div><div class="empty-t">No sessions logged yet.<br>Hit Log to start.</div></div>';
+    return;
+  }
+  list.innerHTML=h.map((s,i)=>{
+    const total=s.exercises.reduce((a,e)=>a+e.sets.length,0);
+    const ds=new Date(s.date+'T12:00:00').toLocaleDateString('en-US',{weekday:'short',month:'short',day:'numeric'});
+    return`<div class="hi-item">
+      <div onclick="toggleHist(${i})">
+        <div class="hi-hdr">
+          <div><div class="hi-name">${s.sessionName}</div><div class="hi-meta">${s.focus} · ${total} sets</div></div>
+          <div class="hi-date">${ds}${s.time?'<br><span style="color:var(--dim)">'+s.time+'</span>':''}</div>
+        </div>
+      </div>
+      <div class="hi-det" id="hd${i}">
+        ${s.exercises.map(ex=>`<div class="hi-ex">
+          <div class="hi-exn">${ex.name}</div>
+          <div class="hi-sets">${ex.sets.map(st=>`<div class="hi-set">${fmt(st.w,st.r)}</div>`).join('')}</div>
+        </div>`).join('')}
+        <button class="del-btn" onclick="deleteSession(${i})">🗑 Delete Session</button>
+      </div>
+    </div>`;
+  }).join('');
+}
+
+function toggleHist(i){document.getElementById('hd'+i).classList.toggle('open');}
+
+function deleteSession(i){
+  if(!confirm('Delete this session?'))return;
+  const h=getHist();h.splice(i,1);saveHist(h);
+  updateStats();renderHist();
+}
+
+function renderSplit(){
+  const days=[...SESSIONS,{id:'rest',num:'R',name:'REST',focus:'Recovery',exs:[]}];
+  document.getElementById('split-list').innerHTML=days.map((s,i)=>`
+    <div class="spd">
+      <div class="sph" onclick="toggleSp(${i})">
+        <div class="spl">
+          <div class="spnum${s.id==='rest'?' rest':''}">${s.num}</div>
+          <div><div class="spti">${s.name}</div><div class="spfo">${s.focus}</div></div>
+        </div>
+        ${s.exs.length?`<span class="spch" id="spch${i}">▼</span>`:''}
+      </div>
+      ${s.exs.length?`<div class="spexs" id="spexs${i}">${s.exs.map((e,j)=>`
+        <div class="spex"><div class="spexn">${j+1}</div><div>${e}</div></div>`).join('')}
+      </div>`:''}
+    </div>`).join('');
+}
+
+function toggleSp(i){
+  const e=document.getElementById('spexs'+i);
+  const c=document.getElementById('spch'+i);
+  if(!e)return;
+  e.classList.toggle('open');
+  if(c)c.style.transform=e.classList.contains('open')?'rotate(180deg)':'';
+}
+
+function switchTab(name,btn){
+  document.querySelectorAll('.tab').forEach(t=>t.classList.remove('active'));
+  document.querySelectorAll('.nb').forEach(b=>b.classList.remove('active'));
+  document.getElementById('tab-'+name).classList.add('active');
+  btn.classList.add('active');
+}
+
+function showToast(msg){
+  const t=document.getElementById('toast');
+  t.textContent=msg;t.classList.add('show');
+  clearTimeout(t._tid);t._tid=setTimeout(()=>t.classList.remove('show'),2200);
 }
 </script>
 </body>
